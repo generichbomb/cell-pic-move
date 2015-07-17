@@ -1,53 +1,28 @@
 import shutil
 import os
-import re
+from datetime import datetime
+
 
 def cellPictureMove():
-    
-    #location of unmoved pictures
-    count = 0
-    source=input("Please enter location of pictures:\n")
+
+    # location of unmoved pictures
+    source = input("Please enter location of pictures:\n")
     print("Moving files...")
 
-    fileNames = next(os.walk(source))[2] #creates list of fileNames
-    for f in fileNames: #begins loop through source
-        split = re.findall(r"[\w']+", f) #splits up filenames
-        year = split[0] #creates two assignments based on split
-        month=""
-        if split[1] == "01":
-            month="Jan"
-        elif split[1] == "02":
-            month="Feb"
-        elif split[1] == "03":
-            month="Mar"
-        elif split[1] == "04":
-            month="Apr"
-        elif split[1] == "05":
-            month="May"
-        elif split[1] == "06":
-            month="June"
-        elif split[1] == "07":
-            month="July"
-        elif split[1] == "08":
-            month="Aug"
-        elif split[1] == "09":
-            month="Sept"     
-        elif split[1] == "10":
-            month="Oct"
-        elif split[1] == "11":
-            month="Nov"
-        elif split[1] == "12":
-            month="Dec"         
+    fileNames = next(os.walk(source))[2]  # creates list of fileNames
+    for f in fileNames:  # begins loop through source
+        date = datetime.strptime(f.split()[0], '%Y-%m-%d')
+        year, month = date.strftime('%Y %b').split()
 
-        oldPath = "{}\{}".format(source,f)
-        newPath = "{}\{}\{}".format(source,year,month) 
-        
-     #check if newpath exists and creates if not existing       
-        if not os.path.exists(newPath): os.makedirs(newPath)
+        oldPath = os.path.join(source, f)
+        newPath = os.path.join(source, year, month)
 
-     #moves file to a new path
+        # check if newpath exists and creates if not existing
+        if not os.path.exists(newPath):
+            os.makedirs(newPath)
+
+        # moves file to a new path
         shutil.move(oldPath, newPath)
-        count = count + 1
-    endnote = "{} files moved successfully".format(count)
+    endnote = "{} files moved successfully".format(len(fileNames))
     print(endnote)
 
